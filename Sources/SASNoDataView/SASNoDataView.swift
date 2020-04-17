@@ -10,8 +10,9 @@ public class SASNoData: NSObject {
     var setImgSize: CGFloat = 80
     var textSize: CGFloat = 20
     var textData: String = "NO DATA"
+    var textColor: UIColor = .black
     
-    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA", bgc: UIColor = .clear, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20) {
+    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA", bgc: UIColor = .clear, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black) {
         self.mainView = mainView
         self.img = img
         self.bgc = bgc
@@ -19,6 +20,7 @@ public class SASNoData: NSObject {
         self.setImgSize = setImgSize
         self.textSize = textSize
         self.textData = textData
+        self.textColor = textColor
     }
     
     public override init() {
@@ -54,7 +56,7 @@ public class SASNoData: NSObject {
         label.text = textData
         label.textAlignment = .center
         label.font = label.font.withSize(20)
-        
+        label.textColor = textColor
         label.translatesAutoresizingMaskIntoConstraints = false
         noDataView.addSubview(imgView)
         noDataView.addSubview(label)
