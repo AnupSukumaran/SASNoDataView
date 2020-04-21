@@ -12,7 +12,7 @@ public class SASNoData: NSObject {
     var textData: String = "NO DATA"
     var textColor: UIColor = .black
     
-    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA", bgc: UIColor = .clear, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black) {
+    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA", bgc: UIColor = .white, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black) {
         self.mainView = mainView
         self.img = img
         self.bgc = bgc
