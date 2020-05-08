@@ -1,6 +1,12 @@
 
 import UIKit
 import SASStringAttributePack
+import SASLogger
+
+public enum NoDataViewForm {
+    case imageAndLabel
+    case imageLabelsBtn
+}
 
 public class SASNoData: NSObject {
     
@@ -11,9 +17,12 @@ public class SASNoData: NSObject {
     var setImgSize: CGFloat = 80
     var textSize: CGFloat = 20
     var textData: String = "NO DATA"
+    var subTextData: String = ""
     var textColor: UIColor = .black
+    var btnActionComp: (() -> ())?
+    var noDataForm: NoDataViewForm = .imageAndLabel
     
-    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA", bgc: UIColor = .white, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black) {
+    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA",subTextData: String = "", bgc: UIColor = .white, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black, btnActionComp: (() -> ())? = nil, noDataForm: NoDataViewForm = .imageAndLabel) {
         self.mainView = mainView
         self.img = img
         self.bgc = bgc
@@ -22,19 +31,28 @@ public class SASNoData: NSObject {
         self.textSize = textSize
         self.textData = textData
         self.textColor = textColor
+        self.btnActionComp = btnActionComp
+        self.noDataForm = noDataForm
+        self.subTextData = subTextData
     }
     
     public override init() {
         super.init()
     
     }
-    
 
     public func noDataView(_ yes: Bool) {
-        yes ? addSubview() : removeSubview()
+        var function: () = ()
+    
+        switch noDataForm {
+        case .imageAndLabel:
+            function = addSubview()
+        case .imageLabelsBtn:
+            function = addSubview2()
+        }
+        
+        yes ? function : removeSubview()
     }
-    
-    
     
     func removeSubview() {
         mainView.subviews.forEach{$0.tag == 500 ? $0.removeFromSuperview():()}
@@ -42,10 +60,10 @@ public class SASNoData: NSObject {
     
     
     func addSubview() {
-        let noDataView = UIView()
-        noDataView.tag = 500
-        noDataView.frame = CGRect(x: 0, y: 0, width: mainView.frame.width, height: mainView.frame.height)
-        noDataView.backgroundColor = bgc
+        let onView = UIView()
+        onView.tag = 500
+        onView.frame = CGRect(x: 0, y: 0, width: mainView.frame.width, height: mainView.frame.height)
+        onView.backgroundColor = bgc
         
         let imgView = UIImageView()
         imgView.contentMode = .scaleAspectFit
@@ -55,44 +73,102 @@ public class SASNoData: NSObject {
         
         let label = UILabel()
         label.text = textData
+        label.font = UIFont.boldSystemFont(ofSize: 20)
         label.textAlignment = .center
-        label.font = label.font.withSize(20)
-        
         label.textColor = textColor
         label.translatesAutoresizingMaskIntoConstraints = false
-        noDataView.addSubview(imgView)
-        noDataView.addSubview(label)
-        mainView.addSubview(noDataView)
         
+        onView.addSubview(imgView)
+        onView.addSubview(label)
+        mainView.addSubview(onView)
         
-        
-        NSLayoutConstraint(item: imgView, attribute: .centerX, relatedBy: .equal, toItem: noDataView, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
-        
-        NSLayoutConstraint(item: imgView, attribute: .centerY, relatedBy: .equal, toItem: noDataView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
-        
-        NSLayoutConstraint(item: imgView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: setImgSize).isActive = true
-        
-        
-        NSLayoutConstraint(item: imgView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: setImgSize).isActive = true
-        
-        
-        NSLayoutConstraint(item: label, attribute: .centerX, relatedBy: .equal, toItem: imgView, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
-        
-        NSLayoutConstraint(item: label, attribute: .top, relatedBy: .equal, toItem: imgView, attribute: .bottom, multiplier: 1, constant: 8).isActive = true
-        
-        NSLayoutConstraint(item: label, attribute: .leading, relatedBy: .equal, toItem: noDataView, attribute: .leading, multiplier: 1, constant: 8).isActive = true
-        
-        NSLayoutConstraint(item: label, attribute: .trailing, relatedBy: .equal, toItem: noDataView, attribute: .trailing, multiplier: 1, constant: -8).isActive = true
-        
-        
-        
-        
+        constraintsForImgView(firstView: imgView, onView: onView, centerY: 0.8, height: setImgSize, width: setImgSize)
+        constraintsForLabelView(firstView: label, secondView: imgView, onView, topDistance: 8)
+ 
         
     }
     
+    func addSubview2() {
+        let onView = UIView()
+        onView.tag = 500
+        onView.frame = CGRect(x: 0, y: 0, width: mainView.frame.width, height: mainView.frame.height)
+        onView.backgroundColor = bgc
+        
+        let imgView = UIImageView()
+        imgView.contentMode = .scaleAspectFit
+        imgView.tintColor = imgClr
+        imgView.image = img
+        imgView.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label = UILabel()
+        label.text = textData
+        label.font = UIFont.boldSystemFont(ofSize: 20)
+        label.textAlignment = .center
+        label.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        
+        let label2 = UILabel()
+        label2.text = subTextData
+        label2.textAlignment = .center
+        label2.textColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+        label2.font = label.font.withSize(15)
+        label2.translatesAutoresizingMaskIntoConstraints = false
+        
+        let btn = UIButton()
+        btn.setTitle("Shop Now", for: .normal)
+        btn.titleLabel?.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+        btn.addTarget(self, action: #selector(btnAction), for: .touchUpInside)
+        btn.backgroundColor = #colorLiteral(red: 0.9529411793, green: 0.6862745285, blue: 0.1333333403, alpha: 1)
+        btn.layer.cornerRadius = 4
+        btn.translatesAutoresizingMaskIntoConstraints = false
+        
+        onView.addSubview(imgView)
+        onView.addSubview(label)
+        onView.addSubview(label2)
+        onView.addSubview(btn)
+        mainView.addSubview(onView)
+        
+        constraintsForImgView(firstView: imgView, onView: onView, centerY: 0.65, height: setImgSize, width: setImgSize)
+        constraintsForLabelView(firstView: label, secondView: imgView, onView, topDistance: 10)
+        constraintsForLabelView(firstView: label2, secondView: label, onView, topDistance: 18)
+        constraintsForBtnView(firstView: btn, secondView: label2, topDistance: 35, height: 40, width: 100)
+  
+    }
+    
+    @objc func btnAction() {
+        Logger.p("BtnAction")
+        btnActionComp?()
+    }
     
     
+    func constraintsForImgView( firstView: UIView, onView: UIView, centerY: CGFloat, height: CGFloat, width: CGFloat) {
+        NSLayoutConstraint(item: firstView, attribute: .centerX, relatedBy: .equal, toItem: onView, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .centerY, relatedBy: .equal, toItem: onView, attribute: .centerY, multiplier: centerY, constant: 0).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: width).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: height).isActive = true
+    }
     
+    func constraintsForBtnView( firstView: UIView, secondView: UIView, topDistance: CGFloat, height: CGFloat, width: CGFloat) {
+        NSLayoutConstraint(item: firstView, attribute: .centerX, relatedBy: .equal, toItem: secondView, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .top, relatedBy: .equal, toItem: secondView, attribute: .bottom, multiplier: 1, constant: topDistance).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: width).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: height).isActive = true
+    }
     
+    func constraintsForLabelView( firstView: UILabel, secondView: UIView, _ onView: UIView, topDistance: CGFloat) {
+        NSLayoutConstraint(item: firstView, attribute: .centerX, relatedBy: .equal, toItem: secondView, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .top, relatedBy: .equal, toItem: secondView, attribute: .bottom, multiplier: 1, constant: topDistance).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .leading, relatedBy: .equal, toItem: onView, attribute: .leading, multiplier: 1, constant: 8).isActive = true
+        
+        NSLayoutConstraint(item: firstView, attribute: .trailing, relatedBy: .equal, toItem: onView, attribute: .trailing, multiplier: 1, constant: -8).isActive = true
+    }
     
 }
