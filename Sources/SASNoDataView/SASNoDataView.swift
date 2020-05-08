@@ -6,6 +6,7 @@ import SASLogger
 public enum NoDataViewForm {
     case imageAndLabel
     case imageLabelsBtn
+    case imageLabelsBtns
 }
 
 public class SASNoData: NSObject {
@@ -20,9 +21,10 @@ public class SASNoData: NSObject {
     var subTextData: String = ""
     var textColor: UIColor = .black
     var btnActionComp: (() -> ())?
+    var wishListActionComp: (() -> ())?
     var noDataForm: NoDataViewForm = .imageAndLabel
     
-    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA",subTextData: String = "", bgc: UIColor = .white, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black, btnActionComp: (() -> ())? = nil, noDataForm: NoDataViewForm = .imageAndLabel) {
+    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA",subTextData: String = "", bgc: UIColor = .white, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black, btnActionComp: (() -> ())? = nil, wishListActionComp: (() -> ())? = nil, noDataForm: NoDataViewForm = .imageAndLabel) {
         self.mainView = mainView
         self.img = img
         self.bgc = bgc
@@ -32,6 +34,7 @@ public class SASNoData: NSObject {
         self.textData = textData
         self.textColor = textColor
         self.btnActionComp = btnActionComp
+        self.wishListActionComp = wishListActionComp
         self.noDataForm = noDataForm
         self.subTextData = subTextData
     }
@@ -48,7 +51,9 @@ public class SASNoData: NSObject {
         case .imageAndLabel:
             function = addSubview()
         case .imageLabelsBtn:
-            function = addSubview2()
+            function = noItemsInCart()
+        case .imageLabelsBtns:
+            function = noItemsInWishList()
         }
         
         yes ? function : removeSubview()
@@ -88,7 +93,7 @@ public class SASNoData: NSObject {
         
     }
     
-    func addSubview2() {
+    func noItemsInCart() {
         let onView = UIView()
         onView.tag = 500
         onView.frame = CGRect(x: 0, y: 0, width: mainView.frame.width, height: mainView.frame.height)
@@ -135,9 +140,70 @@ public class SASNoData: NSObject {
   
     }
     
+    func noItemsInWishList() {
+          let onView = UIView()
+          onView.tag = 500
+          onView.frame = CGRect(x: 0, y: 0, width: mainView.frame.width, height: mainView.frame.height)
+          onView.backgroundColor = bgc
+          
+          let imgView = UIImageView()
+          imgView.contentMode = .scaleAspectFit
+          imgView.tintColor = imgClr
+          imgView.image = img
+          imgView.translatesAutoresizingMaskIntoConstraints = false
+          
+          let label = UILabel()
+          label.text = textData
+          label.font = UIFont.boldSystemFont(ofSize: 20)
+          label.textAlignment = .center
+          label.textColor = #colorLiteral(red: 0, green: 0, blue: 0, alpha: 1)
+          label.translatesAutoresizingMaskIntoConstraints = false
+          
+          let label2 = UILabel()
+          label2.text = subTextData
+          label2.textAlignment = .center
+          label2.textColor = #colorLiteral(red: 0.6000000238, green: 0.6000000238, blue: 0.6000000238, alpha: 1)
+          label2.font = label.font.withSize(15)
+          label2.translatesAutoresizingMaskIntoConstraints = false
+          
+          let btn = UIButton()
+          btn.setTitle("Shop Now", for: .normal)
+          btn.titleLabel?.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+          btn.addTarget(self, action: #selector(btnAction), for: .touchUpInside)
+          btn.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
+          btn.layer.cornerRadius = 4
+          btn.translatesAutoresizingMaskIntoConstraints = false
+        
+            let continueBtn = UIButton()
+            continueBtn.setTitle("Continue Shopping", for: .normal)
+            continueBtn.titleLabel?.textColor = #colorLiteral(red: 0.8549019694, green: 0.250980407, blue: 0.4784313738, alpha: 1)
+            continueBtn.addTarget(self, action: #selector(continueAction), for: .touchUpInside)
+            continueBtn.backgroundColor = .clear
+            
+            continueBtn.translatesAutoresizingMaskIntoConstraints = false
+          
+          onView.addSubview(imgView)
+          onView.addSubview(label)
+          onView.addSubview(label2)
+          onView.addSubview(btn)
+          onView.addSubview(continueBtn)
+          mainView.addSubview(onView)
+          
+          constraintsForImgView(firstView: imgView, onView: onView, centerY: 0.65, height: setImgSize, width: setImgSize)
+          constraintsForLabelView(firstView: label, secondView: imgView, onView, topDistance: 10)
+          constraintsForLabelView(firstView: label2, secondView: label, onView, topDistance: 18)
+          constraintsForBtnView(firstView: btn, secondView: label2, topDistance: 35, height: 40, width: 100)
+          constraintsForBtnView(firstView: continueBtn, secondView: btn, topDistance: 16, height: 40, width: 100)
+      }
+    
     @objc func btnAction() {
         Logger.p("BtnAction")
         btnActionComp?()
+    }
+    
+    @objc func continueAction() {
+        Logger.p("continueAction")
+        wishListActionComp?()
     }
     
     
