@@ -1,5 +1,6 @@
 
 import UIKit
+import SASStringAttributePack
 
 public class SASNoData: NSObject {
     
@@ -56,6 +57,7 @@ public class SASNoData: NSObject {
         label.text = textData
         label.textAlignment = .center
         label.font = label.font.withSize(20)
+        
         label.textColor = textColor
         label.translatesAutoresizingMaskIntoConstraints = false
         noDataView.addSubview(imgView)
@@ -68,10 +70,10 @@ public class SASNoData: NSObject {
         
         NSLayoutConstraint(item: imgView, attribute: .centerY, relatedBy: .equal, toItem: noDataView, attribute: .centerY, multiplier: 1, constant: 0).isActive = true
         
-        NSLayoutConstraint(item: imgView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 80).isActive = true
+        NSLayoutConstraint(item: imgView, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: setImgSize).isActive = true
         
         
-        NSLayoutConstraint(item: imgView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: 80).isActive = true
+        NSLayoutConstraint(item: imgView, attribute: .height, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: setImgSize).isActive = true
         
         
         NSLayoutConstraint(item: label, attribute: .centerX, relatedBy: .equal, toItem: imgView, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
@@ -87,6 +89,8 @@ public class SASNoData: NSObject {
         
         
     }
+    
+    
     
     
     
