@@ -24,7 +24,7 @@ public class SASNoData: NSObject {
     var wishListActionComp: (() -> ())?
     var noDataForm: NoDataViewForm = .imageAndLabel
     
-    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA",subTextData: String = "", bgc: UIColor = .white, imgClr: UIColor = .gray, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black, btnActionComp: (() -> ())? = nil, wishListActionComp: (() -> ())? = nil, noDataForm: NoDataViewForm = .imageAndLabel) {
+    public init(mainView: UIView, img: UIImage,textData: String = "NO DATA",subTextData: String = "", bgc: UIColor = .white, imgClr: UIColor = .clear, setImgSize: CGFloat = 80, textSize: CGFloat = 20, textColor: UIColor = .black, btnActionComp: (() -> ())? = nil, wishListActionComp: (() -> ())? = nil, noDataForm: NoDataViewForm = .imageAndLabel) {
         self.mainView = mainView
         self.img = img
         self.bgc = bgc
@@ -167,25 +167,26 @@ public class SASNoData: NSObject {
           label2.translatesAutoresizingMaskIntoConstraints = false
           
           let btn = UIButton()
-          btn.setTitle("Shop Now", for: .normal)
-          btn.titleLabel?.textColor = #colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0)
+          btn.setTitle("Login", for: .normal)
+          btn.setTitleColor(#colorLiteral(red: 1.0, green: 1.0, blue: 1.0, alpha: 1.0), for: .normal)
           btn.addTarget(self, action: #selector(btnAction), for: .touchUpInside)
           btn.backgroundColor = #colorLiteral(red: 1, green: 0.5763723254, blue: 0, alpha: 1)
           btn.layer.cornerRadius = 4
           btn.translatesAutoresizingMaskIntoConstraints = false
         
-            let continueBtn = UIButton()
-            continueBtn.setTitle("Continue Shopping", for: .normal)
-            continueBtn.titleLabel?.textColor = #colorLiteral(red: 0.8549019694, green: 0.250980407, blue: 0.4784313738, alpha: 1)
-            continueBtn.addTarget(self, action: #selector(continueAction), for: .touchUpInside)
-            continueBtn.backgroundColor = .clear
-            
-            continueBtn.translatesAutoresizingMaskIntoConstraints = false
+        let continueBtn = UIButton()
+        continueBtn.setTitle("Continue Shopping", for: .normal)
+        continueBtn.titleLabel?.font = UIFont.systemFont(ofSize: 14)
+        continueBtn.setTitleColor(#colorLiteral(red: 0.8549019694, green: 0.250980407, blue: 0.4784313738, alpha: 1), for: .normal)
+        continueBtn.addTarget(self, action: #selector(continueAction), for: .touchUpInside)
+        continueBtn.backgroundColor = .clear
+        continueBtn.translatesAutoresizingMaskIntoConstraints = false
           
           onView.addSubview(imgView)
           onView.addSubview(label)
           onView.addSubview(label2)
           onView.addSubview(btn)
+       
           onView.addSubview(continueBtn)
           mainView.addSubview(onView)
           
@@ -193,7 +194,7 @@ public class SASNoData: NSObject {
           constraintsForLabelView(firstView: label, secondView: imgView, onView, topDistance: 10)
           constraintsForLabelView(firstView: label2, secondView: label, onView, topDistance: 18)
           constraintsForBtnView(firstView: btn, secondView: label2, topDistance: 35, height: 40, width: 100)
-          constraintsForBtnView(firstView: continueBtn, secondView: btn, topDistance: 16, height: 40, width: 100)
+          constraintsForBtnView(firstView: continueBtn, secondView: btn, topDistance: 16, height: 40, width: 150)
       }
     
     @objc func btnAction() {
